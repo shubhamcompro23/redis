@@ -26,11 +26,22 @@ async function data() {
 
     console.log("removeExpiry--", removeExpiry)
 
+    //updatevalue
+
+    const updatevalueoptions = {
+        key: "newkey",
+        value: "This is updated value of new key"
+    }
+
+    const updatedValue = await redisController.updateValue(updatevalueoptions)
+
+    console.log("updatedValue",updatedValue)
+
     //updateExpiry
 
     let updateExpiryoptions = {
         key: "newkey",
-        expiry: 40
+        expiry: 5
     }
     const updateExpiry = await redisController.updateExpiry(updateExpiryoptions)
 
@@ -46,16 +57,7 @@ async function data() {
 
     console.log("getKey--", getKey)
 
-    //updatevalue
 
-    const updatevalueoptions = {
-        key: "newkey",
-        value: "This is updated value of new key"
-    }
-
-    const updatedValue = await redisController.updateValue(updatevalueoptions)
-
-    console.log("updatedValue",updatedValue)
 }
 
 data()
