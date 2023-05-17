@@ -91,20 +91,24 @@ async function getKey(options) {
 
 
 async function expireLogger () {
-  await client.configSet("notify-keyspace-events", "KEx");
+    try{
+        await client.configSet("notify-keyspace-events", "KEx");
 
-  const subscriber=client.duplicate();
-  subscriber.connect();
-
-
-  await subscriber.SUBSCRIBE("__keyevent@0__:expired", async(message) => {
-    const data = await client.get(`${process.env.POLLUTANT}:${message}`)
-    console.log("Logger",{
-        expireKey: message,
-        value: data
-    }) 
-    
-  });
+        const subscriber=client.duplicate();
+        subscriber.connect();
+      
+      
+        await subscriber.SUBSCRIBE("__keyevent@0__:expired", async(message) => {
+          const data = await client.get(`${process.env.POLLUTANT}:${message}`)
+          console.log("Logger",{
+              expireKey: message,
+              value: data
+          }) 
+          
+        });
+    }catch(err){
+        console.log("error--", err)
+    }
 
 }
 
