@@ -15,13 +15,18 @@ client.on('connect', () => console.log('connect to redis server'));
 async function addNewKey(options){
 
     try{
+
+        const data = await client.get(options.key)
+        if(data){
+            return new Error("Key alresdy exist")
+        }
         const polutedKey = process.env.POLLUTANT + ":" + options.keyName
         const polluteData = await client.set(polutedKey, options.value)
         if(options.expiry){
             const data = await client.setEx(options.keyName, options.expiry , options.value)
             return {data, polluteData}
         }else{
-            const data = await client.set(polutedKey, options.value)
+            const data = await client.set(options.keyName, options.value)
             return {data, polluteData}
         }
         
@@ -100,6 +105,7 @@ async function expireLogger () {
       
         await subscriber.SUBSCRIBE("__keyevent@0__:expired", async(message) => {
           const data = await client.get(`${process.env.POLLUTANT}:${message}`)
+          const del = await client.DEL(`${process.env.POLLUTANT}:${message}`)
           console.log("Logger",{
               expireKey: message,
               value: data
